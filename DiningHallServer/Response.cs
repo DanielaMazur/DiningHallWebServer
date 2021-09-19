@@ -32,7 +32,7 @@ namespace DiningHallServer
                //{
                var table = new Table(1);
                string jsonTable = JsonConvert.SerializeObject(table);
-               byte[] jsonByteArray = Encoding.Unicode.GetBytes(jsonTable);
+               byte[] jsonByteArray = Encoding.Default.GetBytes(jsonTable);
 
                return new Response("200", "application/json", jsonByteArray);
                //}

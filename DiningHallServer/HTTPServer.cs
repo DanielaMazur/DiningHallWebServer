@@ -1,8 +1,10 @@
-﻿using System.IO;
+﻿using Newtonsoft.Json;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
+using System.Text;
 using System.Threading;
- 
+
 
 namespace DiningHallServer
 {
@@ -45,7 +47,7 @@ namespace DiningHallServer
 
                string msg = "";
 
-               while(reader.Peek() != -1)
+               while (reader.Peek() != -1)
                {
                     msg += reader.ReadLine() + "\n";
                }
