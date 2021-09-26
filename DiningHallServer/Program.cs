@@ -1,5 +1,4 @@
 ﻿using DiningHallServer.Entities;
-using DiningHallServer.Enums;
 using System.Collections.Generic;
 
 namespace DiningHallServer
@@ -11,16 +10,12 @@ namespace DiningHallServer
                HTTPServer server = new(3000);
                server.Start();
 
-               List<Table> tables = new() { new Table(1) };
-               var waiter = new Waiter(1);
+               List<Table> tables = new() { new Table(1), new Table(2), new Table(3), new Table(4), new Table(5) };
+               List<Waiter> waiters = new() { new Waiter(1), new Waiter(2) };
 
-               foreach (var table in tables)
-               {
-                    if (table.State == TableStateEnum.WaitingToOrder)
-                    {
-                         waiter.SendOrder(table.GenerateOrder());
-                    }
-               }
+               var diningHall =  DiningHall.Instance;
+               diningHall.Waiters = waiters;
+               diningHall.Tables = tables;
           }
      }
 }

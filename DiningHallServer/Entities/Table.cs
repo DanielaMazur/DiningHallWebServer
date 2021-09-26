@@ -1,12 +1,31 @@
 ﻿using DiningHallServer.Enums;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace DiningHallServer.Entities
 {
      class Table
      {
-          public TableStateEnum State { get; private set; } = TableStateEnum.WaitingToOrder;
+          private TableStateEnum _state = TableStateEnum.WaitingToOrder;
+          public TableStateEnum State
+          {
+               get
+               {
+                    return _state;
+               }
+               set
+               {
+                    if (value == TableStateEnum.Free)
+                    {
+                         Task.Delay(new Random().Next(100, 500)).ContinueWith((task) =>
+                         {
+                              _state = TableStateEnum.WaitingToBeServed;
+                         });
+                    }
+                    _state = value;
+               }
+          }
           public readonly int Id;
           public Table(int id)
           {
@@ -18,7 +37,7 @@ namespace DiningHallServer.Entities
                var random = new Random();
                var numberOfFoods = random.Next(1, 10);
                int[] foods = new int[numberOfFoods];
-               for(var i = 0; i < numberOfFoods; i++)
+               for (var i = 0; i < numberOfFoods; i++)
                {
                     var foodId = random.Next(10);
                     while (foods.Contains(foodId))
@@ -28,7 +47,8 @@ namespace DiningHallServer.Entities
                     foods[i] = foodId;
                }
                State = TableStateEnum.WaitingToBeServed;
-               return new Order(Guid.NewGuid().GetHashCode(), foods, random.Next(1, 5), Id);
+               var orderId = Guid.NewGuid().GetHashCode();
+               return new Order(orderId, foods, random.Next(1, 5), Id);
           }
      }
 }
