@@ -20,7 +20,7 @@ namespace DiningHallServer.Entities
                     {
                          Task.Delay(new Random().Next(100, 500)).ContinueWith((task) =>
                          {
-                              _state = TableStateEnum.WaitingToBeServed;
+                              _state = TableStateEnum.WaitingToOrder;
                          });
                     }
                     _state = value;
