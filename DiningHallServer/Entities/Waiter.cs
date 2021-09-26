@@ -24,7 +24,7 @@ namespace DiningHallServer.Entities
                     order.MaxWait,
                     PickUpTime = DateTimeOffset.Now.ToUnixTimeSeconds()
                });
-               SendRequestService.SendPostRequest("http://localhost:8000/order", jsonOrder);
+               SendRequestService.SendPostRequest("http://kitchen-server-container:8000/order", jsonOrder);
           }
      }
 }
