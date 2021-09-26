@@ -11,7 +11,7 @@ namespace DiningHallServer
                HTTPServer server = new(3000);
                server.Start();
 
-               List<Table> tables = new() { new Table(1), new Table(2) };
+               List<Table> tables = new() { new Table(1) };
                var waiter = new Waiter(1);
 
                foreach (var table in tables)
@@ -21,7 +21,6 @@ namespace DiningHallServer
                          waiter.SendOrder(table.GenerateOrder());
                     }
                }
-
           }
      }
 }
