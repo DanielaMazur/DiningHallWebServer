@@ -64,12 +64,12 @@ namespace DiningHallServer.Entities
                     State = TableStateEnum.Free;
                     var stars = GetOrderStar(order);
                     DiningHall.Instance.Marks.Add(stars);
-                    Console.OutputEncoding = Encoding.UTF8;
-                    for (var i =0; i< stars; i++)
-                    {
-                         Console.Write("⭐");
-                    }
-                    Console.WriteLine("");
+                    //Console.OutputEncoding = Encoding.UTF8;
+                    //for (var i =0; i< stars; i++)
+                    //{
+                    //     Console.Write("⭐");
+                    //}
+                    //Console.WriteLine("");
                }
           }
 
