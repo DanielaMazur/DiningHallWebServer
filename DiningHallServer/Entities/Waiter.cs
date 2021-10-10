@@ -1,18 +1,46 @@
 ﻿using DiningHallServer.Services;
 using Newtonsoft.Json;
 using System;
+using System.Linq;
 using System.Threading;
 
 namespace DiningHallServer.Entities
 {
-     class Waiter
+     class Waiter 
      {
           public readonly int Id;
-          private DiningHall _diningHall = DiningHall.Instance;
-          public Waiter(int id)
+          private readonly Semaphore _tablesSemaphore;
+
+          public Waiter(int id, Semaphore tablesSemaphore)
           {
                Id = id;
-               Work();
+               _tablesSemaphore = tablesSemaphore;
+          }
+
+          public void Work()
+          {
+               Thread t = new(new ThreadStart(() =>
+               {
+                    while(true)
+                    {
+                         _tablesSemaphore.WaitOne();
+                         foreach (var table in DiningHall.Instance.Tables.ToArray())
+                         {
+                              if (table.State == Enums.TableStateEnum.WaitingToOrder)
+                              {
+                                   SendOrder(table.GenerateOrder());
+                              }
+                         }
+                    }
+               }));
+
+               t.Start();
+          }
+
+          public void ServeOrder(Distribution order)
+          {
+               var table = DiningHall.Instance.Tables.Single(table => table.Id == order.TableId);
+               table.ReciveOrder(order);
           }
 
           private void SendOrder(Order order)
@@ -25,29 +53,10 @@ namespace DiningHallServer.Entities
                     order.Items,
                     order.Priority,
                     order.MaxWait,
-                    PickUpTime = DateTimeOffset.Now.ToUnixTimeSeconds()
+                    PickUpTime = DateTimeOffset.Now.ToUnixTimeMilliseconds()
                });
                Console.WriteLine($"Order {order.Id} was picked up by the waiter {Id}");
                SendRequestService.SendPostRequest("http://kitchen-server-container:8000/order", jsonOrder);
-          }
-
-          public void Work()
-          {
-               Thread t = new(new ThreadStart(() =>
-               {
-                    while (true)
-                    {
-                         foreach (var table in _diningHall.Tables.ToArray())
-                         {
-                              if(table.State == Enums.TableStateEnum.WaitingToOrder)
-                              {
-                                   SendOrder(table.GenerateOrder());
-                              }
-                         }
-                    }
-               }));
-
-               t.Start();
           }
      }
 }

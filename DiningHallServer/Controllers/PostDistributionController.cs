@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using System;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Text;
 
@@ -33,6 +34,9 @@ namespace DiningHallServer.Controllers
                Stream output = httpListenerContext.Response.OutputStream;
                output.Write(responseBuffer, 0, responseBuffer.Length);
                output.Close();
+
+               var waiter = DiningHall.Instance.Waiters.Single(waiter => waiter.Id == recivedOrder.WaiterId);
+               waiter.ServeOrder(recivedOrder);
           }
      }
 }
