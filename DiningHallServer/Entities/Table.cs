@@ -1,7 +1,6 @@
 ﻿using DiningHallServer.Enums;
 using System;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace DiningHallServer.Entities
@@ -19,7 +18,7 @@ namespace DiningHallServer.Entities
                {
                     if (value == TableStateEnum.Free)
                     {
-                         Task.Delay(new Random().Next(100, 500)).ContinueWith((task) =>
+                         Task.Delay(new Random().Next(1000, 5000)).ContinueWith((task) =>
                          {
                               _state = TableStateEnum.WaitingToOrder;
                               DiningHall.Instance.TablesWithOrders.TryAdd(this);
@@ -62,12 +61,11 @@ namespace DiningHallServer.Entities
                     State = TableStateEnum.Free;
                     var stars = GetOrderStar(order);
                     DiningHall.Instance.Marks.Add(stars);
-                    // Console.OutputEncoding = Encoding.UTF8;
-                    // for (var i = 0; i < stars; i++)
-                    // {
-                    //      Console.Write("⭐");
-                    // }
-                    // Console.WriteLine("");
+                    for (var i = 0; i < stars; i++)
+                    {
+                         Console.Write("*");
+                    }
+                    Console.WriteLine("");
                }
           }
 
