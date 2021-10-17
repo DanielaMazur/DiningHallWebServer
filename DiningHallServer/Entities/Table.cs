@@ -22,7 +22,7 @@ namespace DiningHallServer.Entities
                          Task.Delay(new Random().Next(100, 500)).ContinueWith((task) =>
                          {
                               _state = TableStateEnum.WaitingToOrder;
-                              _diningHall.HandleNewOrder();
+                              DiningHall.Instance.TablesWithOrders.TryAdd(this);
                          });
                     }
                     _state = value;
@@ -30,12 +30,10 @@ namespace DiningHallServer.Entities
           }
 
           public readonly int Id;
-          private DiningHall _diningHall;
-          public Table(int id, DiningHall diningHall)
+          public Table(int id)
           {
                Id = id;
                State = TableStateEnum.Free;
-               _diningHall = diningHall;
           }
 
           public Order GenerateOrder()
@@ -59,17 +57,17 @@ namespace DiningHallServer.Entities
 
           public void ReciveOrder(Distribution order)
           {
-               if(order.TableId == this.Id)
+               if (order.TableId == this.Id)
                {
                     State = TableStateEnum.Free;
                     var stars = GetOrderStar(order);
                     DiningHall.Instance.Marks.Add(stars);
-                    //Console.OutputEncoding = Encoding.UTF8;
-                    //for (var i =0; i< stars; i++)
-                    //{
-                    //     Console.Write("⭐");
-                    //}
-                    //Console.WriteLine("");
+                    // Console.OutputEncoding = Encoding.UTF8;
+                    // for (var i = 0; i < stars; i++)
+                    // {
+                    //      Console.Write("⭐");
+                    // }
+                    // Console.WriteLine("");
                }
           }
 
@@ -77,7 +75,7 @@ namespace DiningHallServer.Entities
           {
                var orderTotalTime = DateTimeOffset.Now.ToUnixTimeMilliseconds() - order.PickUpTime;
                Console.WriteLine(orderTotalTime + "    " + order.MaxWait);
-               if (orderTotalTime  < order.MaxWait) return 5;
+               if (orderTotalTime < order.MaxWait) return 5;
                if (orderTotalTime * 1.1 < order.MaxWait) return 4;
                if (orderTotalTime * 1.2 < order.MaxWait) return 3;
                if (orderTotalTime * 1.3 < order.MaxWait) return 2;
