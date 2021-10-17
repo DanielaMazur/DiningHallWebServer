@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
 using DiningHallServer.Entities;
+using DiningHallServer.Interfaces;
 
 namespace DiningHallServer
 {
@@ -9,36 +11,48 @@ namespace DiningHallServer
      {
           public List<int> Marks { get; set; } = new();
           public List<Table> Tables { get; set; } = new();
-          public List<Waiter> Waiters { get; set; } = new();
-          private Semaphore _tablesSemaphore;
+          public List<IWaiter> Waiters { get; set; } = new();
 
-          private static readonly Lazy<DiningHall> controllerInstance = new(() => new DiningHall());
+          public BlockingCollection<Table> TablesWithOrders = new();
+          public BlockingCollection<IWaiter> AvailabeWaiters = new();
 
-          public static DiningHall Instance { get { return controllerInstance.Value; } }
+          private static readonly Lazy<DiningHall> diningHallInstance = new(() => new DiningHall());
+
+          public static DiningHall Instance { get { return diningHallInstance.Value; } }
 
           private DiningHall()
           {
                InitDiningHall(5, 2);
+               Work();
           }
 
           private void InitDiningHall(int numberOfTables, int numberOfWaiters)
           {
-               _tablesSemaphore = new(numberOfTables, numberOfTables);
                for (var i = 1; i <= numberOfTables; i++)
                {
-                    Tables.Add(new(i, this));
+                    Tables.Add(new(i));
                }
                for (var i = 1; i <= numberOfWaiters; i++)
                {
-                    Waiter waiter = new(i, _tablesSemaphore);
-                    waiter.Work();
+                    Waiter waiter = new(i);
                     Waiters.Add(waiter);
+                    AvailabeWaiters.TryAdd(waiter);
                }
           }
 
-          public void HandleNewOrder()
+          private void Work()
           {
-               _tablesSemaphore.Release(1);
+               new Thread(() =>
+               {
+                    while (TablesWithOrders.TryTake(out Table tableWithOrder, -1))
+                    {
+                         while (AvailabeWaiters.TryTake(out IWaiter waiter, -1))
+                         {
+                              waiter.PickUpOrder(tableWithOrder);
+                              break;
+                         }
+                    }
+               }).Start();
           }
      }
 }
