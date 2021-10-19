@@ -58,9 +58,9 @@ namespace DiningHallServer.Entities
                     order.Items,
                     order.Priority,
                     order.MaxWait,
-                    PickUpTime = DateTimeOffset.Now.ToUnixTimeMilliseconds() * Constants.TIME_UNIT
+                    PickUpTime = DateTimeOffset.Now.ToUnixTimeMilliseconds()
                });
-               Console.WriteLine($"Order {order.Id} was picked up by the waiter {Id}");
+               Console.WriteLine($"Order {order.Id} was picked up by the waiter {Id}. Order contains {order.Items.Length} items");
                SendRequestService.SendPostRequest("http://kitchen-server-container:8000/order", jsonOrder);
           }
      }

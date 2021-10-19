@@ -2,6 +2,6 @@
 {
      static class Constants
      {
-          static public int TIME_UNIT = 1;
+          static public int TIME_UNIT = 250;
      }
 }
