@@ -18,9 +18,9 @@ namespace DiningHallServer.Entities
                {
                     if (value == TableStateEnum.Free)
                     {
-                         Task.Delay(new Random().Next(1000, 5000)).ContinueWith((task) =>
+                         Task.Delay(new Random().Next(30, 100) * Constants.TIME_UNIT).ContinueWith((task) =>
                          {
-                              _state = TableStateEnum.WaitingToOrder;
+                             _state = TableStateEnum.WaitingToOrder;
                               DiningHall.Instance.TablesWithOrders.TryAdd(this);
                          });
                     }
@@ -65,7 +65,7 @@ namespace DiningHallServer.Entities
                     {
                          Console.Write("*");
                     }
-                    Console.WriteLine("");
+                    Console.WriteLine("\nAvarage rating => {0} from {1} estimations", (float)DiningHall.Instance.Marks.Sum() / DiningHall.Instance.Marks.Count, DiningHall.Instance.Marks.Count);
                }
           }
 
@@ -74,11 +74,11 @@ namespace DiningHallServer.Entities
                var orderTotalTime = DateTimeOffset.Now.ToUnixTimeMilliseconds() - order.PickUpTime;
                Console.WriteLine(orderTotalTime + "    " + order.MaxWait);
                if (orderTotalTime < order.MaxWait) return 5;
-               if (orderTotalTime * 1.1 < order.MaxWait) return 4;
-               if (orderTotalTime * 1.2 < order.MaxWait) return 3;
-               if (orderTotalTime * 1.3 < order.MaxWait) return 2;
-               if (orderTotalTime * 1.4 < order.MaxWait) return 1;
-               return 1;
+               if (orderTotalTime < order.MaxWait * 1.1) return 4;
+               if (orderTotalTime < order.MaxWait * 1.2) return 3;
+               if (orderTotalTime < order.MaxWait * 1.3) return 2;
+               if (orderTotalTime < order.MaxWait * 1.4) return 1;
+               return 0;
           }
      }
 }
