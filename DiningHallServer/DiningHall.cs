@@ -22,7 +22,7 @@ namespace DiningHallServer
 
           private DiningHall()
           {
-               InitDiningHall(5, 2);
+               InitDiningHall(10, 4);
                Work();
           }
 

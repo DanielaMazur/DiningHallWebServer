@@ -4,7 +4,7 @@
      {
           static void Main(string[] args)
           {
-               HTTPServer server = new(3000);
+               HTTPServer server = new();
                server.Start();
 
                var diningHall = DiningHall.Instance;

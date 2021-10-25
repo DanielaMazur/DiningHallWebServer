@@ -1,4 +1,5 @@
-﻿using DiningHallServer.Services;
+﻿using DiningHallServer.Entities;
+using DiningHallServer.Services;
 using System;
 using System.Linq;
 using System.Net;
@@ -13,10 +14,10 @@ namespace DiningHallServer
           public const string VERSION = "HTTP/1.1";
           public const string NAME = "Dining Hall";
 
-          public HTTPServer(int port)
+          public HTTPServer()
           {
                _httpListener = new HttpListener();
-               _httpListener.Prefixes.Add($"http://dining-hall-server-container:{port}/");
+               _httpListener.Prefixes.Add($"{Constants.DINING_HALL_ADDRESS}/");
           }
 
           public void Start()

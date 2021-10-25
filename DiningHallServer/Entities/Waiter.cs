@@ -61,7 +61,7 @@ namespace DiningHallServer.Entities
                     PickUpTime = DateTimeOffset.Now.ToUnixTimeMilliseconds()
                });
                Console.WriteLine($"Order {order.Id} was picked up by the waiter {Id}. Order contains {order.Items.Length} items");
-               SendRequestService.SendPostRequest("http://kitchen-server-container:8000/order", jsonOrder);
+               SendRequestService.SendPostRequest("http://localhost:8000/order", jsonOrder);
           }
      }
 }
